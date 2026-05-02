@@ -1,0 +1,439 @@
+import React, { useState, useEffect } from 'react';
+import { Home, Calculator, Triangle, PenTool, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+
+// --- សមាសភាគចម្បង (Main Component) ---
+export default function App() {
+  const [activeTab, setActiveTab] = useState('home');
+
+  // អនុគមន៍សម្រាប់បង្ហាញទំព័រតាមការចុច
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home':
+        return <HomeSection setActiveTab={setActiveTab} />;
+      case 'calculator':
+        return <CalculatorSection />;
+      case 'geometry':
+        return <GeometrySection />;
+      case 'quiz':
+        return <QuizSection />;
+      default:
+        return <HomeSection setActiveTab={setActiveTab} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col">
+      {/* របារខាងលើ (Header / Navbar) */}
+      <header className="bg-blue-600 text-white shadow-lg sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setActiveTab('home')}>
+            <Triangle className="w-8 h-8 text-yellow-300 fill-current" />
+            <h1 className="text-2xl font-bold tracking-wide">គណិតវិទ្យាឆ្លាតវៃ</h1>
+          </div>
+          
+          {/* ម៉ឺនុយសម្រាប់កុំព្យូទ័រ */}
+          <nav className="hidden md:flex space-x-1">
+            <NavButton icon={<Home size={20} />} label="ទំព័រដើម" isActive={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+            <NavButton icon={<Calculator size={20} />} label="ម៉ាស៊ីនគិតលេខ" isActive={activeTab === 'calculator'} onClick={() => setActiveTab('calculator')} />
+            <NavButton icon={<Triangle size={20} />} label="ធរណីមាត្រ" isActive={activeTab === 'geometry'} onClick={() => setActiveTab('geometry')} />
+            <NavButton icon={<PenTool size={20} />} label="លំហាត់អនុវត្ត" isActive={activeTab === 'quiz'} onClick={() => setActiveTab('quiz')} />
+          </nav>
+        </div>
+      </header>
+
+      {/* ផ្ទៃបង្ហាញព័ត៌មានខាងក្នុង (Main Content Area) */}
+      <main className="flex-grow container mx-auto px-4 py-8 mb-20 md:mb-8 flex justify-center">
+        <div className="w-full max-w-4xl">
+          {renderContent()}
+        </div>
+      </main>
+
+      {/* ម៉ឺនុយសម្រាប់ទូរស័ព្ទដៃ (Mobile Bottom Nav) */}
+      <nav className="md:hidden fixed bottom-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] flex justify-around py-3 z-10">
+         <MobileNavBtn icon={<Home size={24} />} label="ទំព័រដើម" isActive={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+         <MobileNavBtn icon={<Calculator size={24} />} label="គិតលេខ" isActive={activeTab === 'calculator'} onClick={() => setActiveTab('calculator')} />
+         <MobileNavBtn icon={<Triangle size={24} />} label="ធរណីមាត្រ" isActive={activeTab === 'geometry'} onClick={() => setActiveTab('geometry')} />
+         <MobileNavBtn icon={<PenTool size={24} />} label="លំហាត់" isActive={activeTab === 'quiz'} onClick={() => setActiveTab('quiz')} />
+      </nav>
+    </div>
+  );
+}
+
+// --- សមាសភាគរង (Sub Components) ---
+
+// ប៊ូតុងម៉ឺនុយ (Desktop)
+const NavButton = ({ icon, label, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+      isActive ? 'bg-blue-800 text-white' : 'hover:bg-blue-500 text-blue-50'
+    }`}
+  >
+    {icon}
+    <span className="font-medium">{label}</span>
+  </button>
+);
+
+// ប៊ូតុងម៉ឺនុយ (Mobile)
+const MobileNavBtn = ({ icon, label, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex flex-col items-center p-2 rounded-xl w-16 transition-colors ${
+      isActive ? 'text-blue-600 bg-blue-50' : 'text-slate-500 hover:bg-slate-100'
+    }`}
+  >
+    {icon}
+    <span className="text-[10px] mt-1 font-medium">{label}</span>
+  </button>
+);
+
+// ១. ទំព័រដើម (Home Section)
+const HomeSection = ({ setActiveTab }) => (
+  <div className="space-y-8 animate-fade-in">
+    <div className="bg-white rounded-2xl p-8 shadow-sm text-center border border-slate-100">
+      <h2 className="text-3xl font-bold text-slate-800 mb-4">សូមស្វាគមន៍មកកាន់ គេហទំព័រគណិតវិទ្យា</h2>
+      <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
+        នេះគឺជាកន្លែងដែលអ្នកអាចប្រើប្រាស់ឧបករណ៍គណិតវិទ្យាផ្សេងៗ ដើម្បីសម្រួលដល់ការសិក្សា និងការងារប្រចាំថ្ងៃរបស់អ្នក។
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <ActionCard 
+        icon={<Calculator size={40} className="text-blue-500" />}
+        title="ម៉ាស៊ីនគិតលេខ"
+        description="ធ្វើការគណនាបូក ដក គុណ ចែក លេខបានយ៉ាងរហ័ស។"
+        onClick={() => setActiveTab('calculator')}
+      />
+      <ActionCard 
+        icon={<Triangle size={40} className="text-green-500" />}
+        title="ធរណីមាត្រ"
+        description="គណនាផ្ទៃក្រឡា និងបរិមាត្រនៃរូបរាងផ្សេងៗ។"
+        onClick={() => setActiveTab('geometry')}
+      />
+      <ActionCard 
+        icon={<PenTool size={40} className="text-purple-500" />}
+        title="លំហាត់អនុវត្ត"
+        description="សាកល្បងសមត្ថភាពគិតលេខរបស់អ្នកជាមួយលំហាត់ខ្លីៗ។"
+        onClick={() => setActiveTab('quiz')}
+      />
+    </div>
+  </div>
+);
+
+const ActionCard = ({ icon, title, description, onClick }) => (
+  <div 
+    onClick={onClick}
+    className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 cursor-pointer transition-all transform hover:-translate-y-1 group text-center flex flex-col items-center"
+  >
+    <div className="p-4 bg-slate-50 rounded-full mb-4 group-hover:scale-110 transition-transform">
+      {icon}
+    </div>
+    <h3 className="text-xl font-bold mb-2 text-slate-800">{title}</h3>
+    <p className="text-slate-500">{description}</p>
+  </div>
+);
+
+// ២. ម៉ាស៊ីនគិតលេខ (Calculator Section)
+const CalculatorSection = () => {
+  const [display, setDisplay] = useState('0');
+  const [equation, setEquation] = useState('');
+
+  const handleInput = (val) => {
+    if (display === '0' && val !== '.') {
+      setDisplay(val);
+    } else {
+      setDisplay(display + val);
+    }
+  };
+
+  const handleOperator = (op) => {
+    setEquation(display + ' ' + op + ' ');
+    setDisplay('0');
+  };
+
+  const calculate = () => {
+    try {
+      // ប្រើប្រាស់ logic ងាយស្រួលសម្រាប់ការគិតលេខ (ចំណាំ: eval ប្រើសម្រាប់តែទិន្នន័យមានសុវត្ថិភាព)
+      const fullEquation = equation + display;
+      // ជំនួសសញ្ញាគុណ និងចែកឲ្យត្រូវនឹង javascript
+      const safeEq = fullEquation.replace(/×/g, '*').replace(/÷/g, '/');
+      const result = Function('"use strict";return (' + safeEq + ')')();
+      setDisplay(String(result));
+      setEquation('');
+    } catch (e) {
+      setDisplay('Error');
+    }
+  };
+
+  const clear = () => {
+    setDisplay('0');
+    setEquation('');
+  };
+
+  const btnClasses = "h-16 rounded-2xl text-2xl font-semibold transition-colors focus:outline-none active:scale-95 flex items-center justify-center shadow-sm";
+
+  return (
+    <div className="max-w-md mx-auto bg-slate-800 p-6 rounded-3xl shadow-xl animate-fade-in">
+      <div className="mb-6">
+        <h2 className="text-white text-xl font-bold mb-4 flex items-center"><Calculator className="mr-2" /> ម៉ាស៊ីនគិតលេខ</h2>
+        <div className="bg-slate-900 rounded-2xl p-4 text-right flex flex-col justify-end min-h-[100px] border border-slate-700">
+          <div className="text-slate-400 text-lg h-6">{equation}</div>
+          <div className="text-white text-5xl font-light truncate tracking-wider">{display}</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-3">
+        {/* ជួរទី១ */}
+        <button onClick={clear} className={`${btnClasses} col-span-2 bg-red-500 hover:bg-red-400 text-white`}>លុប (C)</button>
+        <button onClick={() => handleOperator('÷')} className={`${btnClasses} bg-blue-500 hover:bg-blue-400 text-white`}>÷</button>
+        <button onClick={() => handleOperator('×')} className={`${btnClasses} bg-blue-500 hover:bg-blue-400 text-white`}>×</button>
+        
+        {/* ជួរទី២ */}
+        <button onClick={() => handleInput('7')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>7</button>
+        <button onClick={() => handleInput('8')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>8</button>
+        <button onClick={() => handleInput('9')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>9</button>
+        <button onClick={() => handleOperator('-')} className={`${btnClasses} bg-blue-500 hover:bg-blue-400 text-white`}>-</button>
+        
+        {/* ជួរទី៣ */}
+        <button onClick={() => handleInput('4')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>4</button>
+        <button onClick={() => handleInput('5')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>5</button>
+        <button onClick={() => handleInput('6')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>6</button>
+        <button onClick={() => handleOperator('+')} className={`${btnClasses} bg-blue-500 hover:bg-blue-400 text-white`}>+</button>
+        
+        {/* ជួរទី៤ និងទី៥ បញ្ចូលគ្នា */}
+        <button onClick={() => handleInput('1')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>1</button>
+        <button onClick={() => handleInput('2')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>2</button>
+        <button onClick={() => handleInput('3')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100`}>3</button>
+        <button onClick={calculate} className={`${btnClasses} row-span-2 bg-green-500 hover:bg-green-400 text-white text-4xl`}>=</button>
+        
+        <button onClick={() => handleInput('0')} className={`${btnClasses} col-span-2 bg-slate-700 hover:bg-slate-600 text-slate-100`}>0</button>
+        <button onClick={() => handleInput('.')} className={`${btnClasses} bg-slate-700 hover:bg-slate-600 text-slate-100 font-black`}>.</button>
+      </div>
+    </div>
+  );
+};
+
+// ៣. ធរណីមាត្រ (Geometry Section)
+const GeometrySection = () => {
+  const [shape, setShape] = useState('square');
+  const [inputs, setInputs] = useState({ w: '', h: '', r: '' });
+  const [result, setResult] = useState(null);
+
+  const calculateGeometry = () => {
+    let area = 0;
+    let perimeter = 0;
+    const { w, h, r } = inputs;
+
+    const numW = parseFloat(w) || 0;
+    const numH = parseFloat(h) || 0;
+    const numR = parseFloat(r) || 0;
+
+    if (shape === 'square') {
+      area = numW * numW;
+      perimeter = 4 * numW;
+    } else if (shape === 'rectangle') {
+      area = numW * numH;
+      perimeter = 2 * (numW + numH);
+    } else if (shape === 'circle') {
+      area = Math.PI * numR * numR;
+      perimeter = 2 * Math.PI * numR;
+    }
+
+    setResult({
+      area: area.toFixed(2),
+      perimeter: perimeter.toFixed(2)
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
+
+  useEffect(() => {
+    setResult(null); // Reset results when shape changes
+    setInputs({ w: '', h: '', r: '' });
+  }, [shape]);
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto animate-fade-in">
+      <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4">
+        <Triangle className="mr-3 text-green-500" /> គណនាផ្ទៃក្រឡា និងបរិមាត្រ
+      </h2>
+
+      <div className="mb-6">
+        <label className="block text-slate-700 font-medium mb-2">ជ្រើសរើសរូបរាង៖</label>
+        <div className="flex space-x-4">
+          {['square', 'rectangle', 'circle'].map((s) => (
+            <button
+              key={s}
+              onClick={() => setShape(s)}
+              className={`px-4 py-2 rounded-lg border font-medium transition-colors flex-1 ${
+                shape === s ? 'bg-green-500 text-white border-green-500' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              {s === 'square' && 'ការ៉េ'}
+              {s === 'rectangle' && 'ចតុកោណកែង'}
+              {s === 'circle' && 'រង្វង់'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 mb-6">
+        {shape === 'square' && (
+          <div>
+            <label className="block text-slate-700 mb-2">ប្រវែងជ្រុង (a):</label>
+            <input type="number" name="w" value={inputs.w} onChange={handleInputChange} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="ឧទាហរណ៍៖ 5" />
+          </div>
+        )}
+        {shape === 'rectangle' && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-slate-700 mb-2">បណ្តោយ (w):</label>
+              <input type="number" name="w" value={inputs.w} onChange={handleInputChange} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="ឧទាហរណ៍៖ 10" />
+            </div>
+            <div>
+              <label className="block text-slate-700 mb-2">ទទឹង (h):</label>
+              <input type="number" name="h" value={inputs.h} onChange={handleInputChange} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="ឧទាហរណ៍៖ 5" />
+            </div>
+          </div>
+        )}
+        {shape === 'circle' && (
+          <div>
+            <label className="block text-slate-700 mb-2">កាំ (r):</label>
+            <input type="number" name="r" value={inputs.r} onChange={handleInputChange} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="ឧទាហរណ៍៖ 7" />
+          </div>
+        )}
+      </div>
+
+      <button onClick={calculateGeometry} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-sm mb-6">
+        គណនា
+      </button>
+
+      {result && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center animate-fade-in">
+          <h3 className="text-lg font-bold text-green-800 mb-4">លទ្ធផល៖</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <p className="text-slate-500 text-sm mb-1">ផ្ទៃក្រឡា</p>
+              <p className="text-2xl font-bold text-green-600">{result.area}</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <p className="text-slate-500 text-sm mb-1">បរិមាត្រ</p>
+              <p className="text-2xl font-bold text-blue-600">{result.perimeter}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ៤. លំហាត់អនុវត្ត (Quiz Section)
+const QuizSection = () => {
+  const [question, setQuestion] = useState({ num1: 0, num2: 0, op: '+' });
+  const [userAnswer, setUserAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null); // null, 'correct', 'incorrect'
+
+  const generateQuestion = () => {
+    const ops = ['+', '-', '×'];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    let num1, num2;
+
+    if (op === '×') {
+      num1 = Math.floor(Math.random() * 10) + 1; // 1-10
+      num2 = Math.floor(Math.random() * 10) + 1;
+    } else {
+      num1 = Math.floor(Math.random() * 50) + 1; // 1-50
+      num2 = Math.floor(Math.random() * 50) + 1;
+      // ធានាថាការដកមិនចេញលេខអវិជ្ជមាន
+      if (op === '-' && num2 > num1) {
+        [num1, num2] = [num2, num1];
+      }
+    }
+
+    setQuestion({ num1, num2, op });
+    setUserAnswer('');
+    setFeedback(null);
+  };
+
+  useEffect(() => {
+    generateQuestion();
+  }, []);
+
+  const checkAnswer = (e) => {
+    e.preventDefault();
+    if (userAnswer === '') return;
+
+    let correctAnswer;
+    if (question.op === '+') correctAnswer = question.num1 + question.num2;
+    if (question.op === '-') correctAnswer = question.num1 - question.num2;
+    if (question.op === '×') correctAnswer = question.num1 * question.num2;
+
+    if (parseInt(userAnswer) === correctAnswer) {
+      setScore(score + 10);
+      setFeedback('correct');
+      setTimeout(generateQuestion, 1500); // ផ្លាស់ប្តូរសំណួរថ្មីក្រោយ ១.៥ វិនាទី
+    } else {
+      setFeedback('incorrect');
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-lg mx-auto text-center animate-fade-in">
+      <div className="flex justify-between items-center mb-8 border-b pb-4">
+        <h2 className="text-2xl font-bold text-slate-800 flex items-center">
+          <PenTool className="mr-3 text-purple-500" /> លំហាត់អនុវត្ត
+        </h2>
+        <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-bold">
+          ពិន្ទុ៖ {score}
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <p className="text-slate-500 mb-2">តើចម្លើយមួយណាត្រឹមត្រូវ?</p>
+        <div className="text-5xl font-black text-slate-800 bg-slate-50 py-8 rounded-xl border border-slate-100 shadow-inner">
+          {question.num1} {question.op} {question.num2} = ?
+        </div>
+      </div>
+
+      <form onSubmit={checkAnswer} className="space-y-4">
+        <input
+          type="number"
+          value={userAnswer}
+          onChange={(e) => setUserAnswer(e.target.value)}
+          className="w-full text-center text-2xl p-4 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+          placeholder="បញ្ចូលចម្លើយទីនេះ"
+          autoFocus
+          disabled={feedback === 'correct'}
+        />
+        
+        <button 
+          type="submit" 
+          disabled={feedback === 'correct'}
+          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white font-bold py-4 rounded-xl transition-colors shadow-md text-lg"
+        >
+          ផ្ទៀងផ្ទាត់ចម្លើយ
+        </button>
+      </form>
+
+      {/* សារបញ្ជាក់លទ្ធផល */}
+      {feedback && (
+        <div className={`mt-6 p-4 rounded-xl flex items-center justify-center space-x-2 animate-bounce-short ${
+          feedback === 'correct' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}>
+          {feedback === 'correct' ? (
+             <><CheckCircle2 size={24} /> <span className="font-bold text-lg">ត្រឹមត្រូវណាស់! ទទួលបាន ១០ ពិន្ទុ!</span></>
+          ) : (
+             <><XCircle size={24} /> <span className="font-bold text-lg">មិនទាន់ត្រឹមត្រូវទេ! សាកល្បងម្តងទៀត។</span></>
+          )}
+        </div>
+      )}
+
+      <button onClick={generateQuestion} className="mt-8 text-slate-400 hover:text-slate-600 flex items-center justify-center w-full">
+        <RefreshCw size={16} className="mr-2" /> រំលងសំណួរនេះ
+      </button>
+    </div>
+  );
+};
